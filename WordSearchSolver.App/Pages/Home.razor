@@ -1,0 +1,91 @@
+﻿@page "/"
+@using WordSearchSolver.Ai
+@using WordSearchSolver.Core
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+@inject IJSRuntime JS
+
+<PageTitle>WordSearchSolver</PageTitle>
+
+<h1>Take a photo of your puzzle</h1>
+
+<div>
+    <label>
+        Api Endpoint:
+        <InputText @bind-value="apiEndpoint" />
+    </label>
+
+    <label>
+        Api Key:
+        <InputText type="password" @bind-value="apiKey" />
+    </label>
+</div>
+
+<div>
+    <label>
+        Image:
+        <InputFile accept="image/*"
+                   capture="environment"
+                   OnChange="ReadImage"
+                   @ref="wordSearchUpload" />
+    </label>
+</div>
+
+<img @ref='wordSearchImgRef' alt="Word Search Puzzle" />
+
+<script>
+        window.previewImage = (inputElem, imgElem) => {
+            const url = URL.createObjectURL(inputElem.files[0]);
+            imgElem.addEventListener('load', () => URL.revokeObjectURL(url), { once: true });
+            imgElem.src = url;
+    }
+</script>
+
+@if (wordSearchData != null)
+{
+    <table class="table">
+        <tbody>
+            <tr>
+                <td>@wordSearchData.Letters</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Words</h3>
+    @foreach (var word in wordSearchData.WordBank)
+    {
+        <div>@word</div>
+    }
+}
+
+@code {
+    private string apiKey = string.Empty;
+    private string apiEndpoint = string.Empty;
+
+    private ElementReference wordSearchImgRef;
+    private InputFile? wordSearchUpload;
+
+    private WordSearch? wordSearchData = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        apiKey = await LocalStorage.GetItemAsync<string>(nameof(apiKey)) ?? apiKey;
+        apiEndpoint = await LocalStorage.GetItemAsync<string>(nameof(apiEndpoint)) ?? apiEndpoint;
+    }
+
+    private async Task ReadImage(InputFileChangeEventArgs e)
+    {
+        await LocalStorage.SetItemAsync(nameof(apiKey), apiKey);
+        await LocalStorage.SetItemAsync(nameof(apiEndpoint), apiEndpoint);
+
+        await JS.InvokeVoidAsync("previewImage", wordSearchUpload!.Element, wordSearchImgRef);
+
+        var api = new AzureDocumentIntellegence(new Credential(apiKey, apiEndpoint));
+        // wordSearch = await api.ExtractWordSearch(
+        //     BinaryData.FromStream(
+        //         e.File.OpenReadStream()));
+    }
+
+
+}
