@@ -1,0 +1,42 @@
+﻿@inject IJSRuntime JS
+
+
+<img @ref='wordSearchImgRef' alt="Word Search Puzzle" />
+
+<script>
+        window.previewImage = (inputElem, imgElem) => {
+            const url = URL.createObjectURL(inputElem.files[0]);
+            imgElem.addEventListener('load', () => URL.revokeObjectURL(url), { once: true });
+            imgElem.src = url;
+    }
+</script>
+
+@* 
+@if (wordSearchData != null)
+{
+    <table class="table">
+        <tbody>
+            <tr>
+                <td>@wordSearchData.Letters</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Words</h3>
+    @foreach (var word in wordSearchData.WordBank)
+    {
+        <div>@word</div>
+    }
+} *@
+
+@code {
+    [Parameter]
+    public ElementReference? FileElement{ get; init; }
+
+    private ElementReference wordSearchImgRef;
+
+    public async Task Initialize()
+    {
+        await JS.InvokeVoidAsync("previewImage", FileElement, wordSearchImgRef);
+    }
+}
