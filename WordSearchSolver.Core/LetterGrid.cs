@@ -5,13 +5,13 @@ namespace WordSearchSolver.Core;
 public record Segment(int StartX, int StartY, int EndX, int EndY)
 {
     public Segment(Point start, Point end)
-        : this(start.x, start.y, end.x, end.y) { }
+        : this(start.X, start.Y, end.X, end.Y) { }
     public static Segment Reverse(Segment segment)
     {
         return new Segment(segment.EndX, segment.EndY, segment.StartX, segment.StartY);
     }
 }
-public record Point(int x, int y);
+public record Point(int X, int Y);
 public class LetterGrid
 {
     protected static readonly char[] LineBreaks = ['\n', '\r'];
@@ -110,42 +110,42 @@ public class LetterGrid
         {
             var indexOffset = word.Length - 1;
 
-            if (Grid[point.x, point.y] == word[0])
+            if (Grid[point.X, point.Y] == word[0])
             {
                 if (word.Length == 1)
                     return new Segment(point, point);
 
-                var across = new Segment(point, point with { y = point.y + indexOffset });
+                var across = new Segment(point, point with { Y = point.Y + indexOffset });
                 if (StringAt(across) == word)
                     return across;
 
-                var down = new Segment(point, point with { x = point.x + indexOffset });
+                var down = new Segment(point, point with { X = point.X + indexOffset });
                 if (StringAt(down) == word)
                     return down;
 
-                var diagonal = new Segment(point, point with { x = point.x + indexOffset, y = point.y + indexOffset });
+                var diagonal = new Segment(point, point with { X = point.X + indexOffset, Y = point.Y + indexOffset });
                 if (StringAt(diagonal) == word)
                     return diagonal;
 
-                var diagonal2 = new Segment(point, point with { x = point.x - indexOffset, y = point.y + indexOffset });
+                var diagonal2 = new Segment(point, point with { X = point.X - indexOffset, Y = point.Y + indexOffset });
                 if (StringAt(diagonal2) == word)
                     return diagonal2;
 
-            } else if(Grid[point.x, point.y] == word[^1])
+            } else if(Grid[point.X, point.Y] == word[^1])
             {
-                var acrossR = new Segment(point with { y = point.y + indexOffset }, point);
+                var acrossR = new Segment(point with { Y = point.Y + indexOffset }, point);
                 if (StringAt(acrossR) == word)
                     return acrossR;
 
-                var up = new Segment(point with { x = point.x + indexOffset }, point);
+                var up = new Segment(point with { X = point.X + indexOffset }, point);
                 if (StringAt(up) == word)
                     return up;
 
-                var diagonalR = new Segment(point with { x = point.x + indexOffset, y = point.y + indexOffset }, point);
+                var diagonalR = new Segment(point with { X = point.X + indexOffset, Y = point.Y + indexOffset }, point);
                 if (StringAt(diagonalR) == word)
                     return diagonalR;
 
-                var diagonal2R = new Segment(point with { x = point.x - indexOffset, y = point.y + indexOffset }, point);
+                var diagonal2R = new Segment(point with { X = point.X - indexOffset, Y = point.Y + indexOffset }, point);
                 if (StringAt(diagonal2R) == word)
                     return diagonal2R;
             }

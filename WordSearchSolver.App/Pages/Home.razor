@@ -55,7 +55,7 @@
         await LocalStorage.SetItemAsync(nameof(apiEndpoint), apiEndpoint);
 
         wordSearchArea?.Initialize();
-        var api = new AzureDocumentIntellegence(new Credential(apiKey, apiEndpoint));
+        var api = new AzureDocumentIntellegence(new Credential(apiKey, apiEndpoint, "gpt-4o-mini"));
         // wordSearch = await api.ExtractWordSearch(
         //     BinaryData.FromStream(
         //         e.File.OpenReadStream()));

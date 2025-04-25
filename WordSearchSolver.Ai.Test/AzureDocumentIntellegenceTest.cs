@@ -15,7 +15,6 @@ public class AzureDocumentIntellegenceTest
             ?? throw new ApplicationException("You must define a user secret per the Credential record");
     }
     [Test]
-    [Skip("using a different service")]
     public async Task TestExtractWordSearch()
     {
         var azureDocumentIntellegence = new AzureDocumentIntellegence(Azure);
