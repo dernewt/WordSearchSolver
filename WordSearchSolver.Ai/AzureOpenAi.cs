@@ -8,10 +8,11 @@ namespace WordSearchSolver.Ai;
 
 public record Credential(string Key, string Endpoint, string ModelId);
 
-public class AzureDocumentIntellegence
+public class AzureOpenAi
+
 {
     protected Kernel kernel;
-    public AzureDocumentIntellegence(Credential configuration)
+    public AzureOpenAi(Credential configuration)
     {
         var kernelBuilder = Kernel.CreateBuilder();
 
@@ -20,9 +21,6 @@ public class AzureDocumentIntellegence
             configuration.Endpoint,
             configuration.Key);
 
-        //dotnet add package Microsoft.Extensions.Logging
-        //dotnet add package Microsoft.Extensions.Logging.Console
-        //builder.Services.AddLogging(services => services.AddConsole().SetMinimumLevel(LogLevel.Trace));
         kernel = kernelBuilder.Build();
 
 
@@ -61,7 +59,7 @@ public class AzureDocumentIntellegence
         history.AddSystemMessage("You are an expert word search and word seek puzzler. Your task is to extract key information from the provided puzzle. Format your response as a JSON object, where the keys are the data point names and the values are the extracted information. Do not include any explanatory text or comments in your response, just the raw JSON. Process it carefully and provide the JSON output.");
 
         history.AddUserMessage([
-            new Microsoft.SemanticKernel.TextContent("This is the puzzle"),
+            new TextContent("This is the puzzle"),
             new ImageContent(image, "image/png")]);
 
         var result = await chat.GetChatMessageContentAsync(history, settings)

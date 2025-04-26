@@ -18,6 +18,11 @@
         Api Key:
         <InputText type="password" @bind-value="apiKey" />
     </label>
+
+    <label>
+        Api Model:
+        <InputText type="password" @bind-value="apiModel" />
+    </label>
 </div>
 
 <div>
@@ -25,18 +30,18 @@
         Image:
         <InputFile accept="image/*"
                    capture="environment"
-                   OnChange="ReadImage"
+                   OnChange="InitializeWordSearchArea"
                    @ref="wordSearchUpload" />
     </label>
 </div>
 
-<WordSearchArea
-    FileElement="wordSearchUpload!.Element"
+<WordSearchArea FileElement="wordSearchUpload!.Element"
                 @ref="wordSearchArea" />
 
 @code {
     private string apiKey = string.Empty;
     private string apiEndpoint = string.Empty;
+    private string apiModel = string.Empty;
 
     private WordSearchArea? wordSearchArea;
     private InputFile? wordSearchUpload;
@@ -45,20 +50,20 @@
     {
         await base.OnInitializedAsync();
 
-        apiKey = await LocalStorage.GetItemAsync<string>(nameof(apiKey)) ?? apiKey;
-        apiEndpoint = await LocalStorage.GetItemAsync<string>(nameof(apiEndpoint)) ?? apiEndpoint;
+        apiKey = await LocalStorage.GetItemAsync<string>(nameof(apiKey))
+            ?? apiKey;
+        apiEndpoint = await LocalStorage.GetItemAsync<string>(nameof(apiEndpoint))
+            ?? apiEndpoint;
     }
 
-    private async Task ReadImage(InputFileChangeEventArgs e)
+    private async Task InitializeWordSearchArea(InputFileChangeEventArgs e)
     {
         await LocalStorage.SetItemAsync(nameof(apiKey), apiKey);
         await LocalStorage.SetItemAsync(nameof(apiEndpoint), apiEndpoint);
+        await LocalStorage.SetItemAsync(nameof(apiModel), apiModel);
+        var creds = new Credential(apiKey, apiEndpoint, apiModel);
 
-        wordSearchArea?.Initialize();
-        var api = new AzureDocumentIntellegence(new Credential(apiKey, apiEndpoint, "gpt-4o-mini"));
-        // wordSearch = await api.ExtractWordSearch(
-        //     BinaryData.FromStream(
-        //         e.File.OpenReadStream()));
+        wordSearchArea?.Initialize(creds, e.File);
     }
 
 

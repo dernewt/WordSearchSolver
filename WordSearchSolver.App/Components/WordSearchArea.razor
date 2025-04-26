@@ -1,4 +1,5 @@
-﻿@inject IJSRuntime JS
+﻿@using WordSearchSolver.Ai
+@inject IJSRuntime JS
 
 
 <img @ref='wordSearchImgRef' alt="Word Search Puzzle" />
@@ -35,8 +36,13 @@
 
     private ElementReference wordSearchImgRef;
 
-    public async Task Initialize()
+    public async Task Initialize(Credential creds, IBrowserFile file)
     {
         await JS.InvokeVoidAsync("previewImage", FileElement, wordSearchImgRef);
+
+        var api = new AzureOpenAi(creds);
+        var wordSearch = await api.ExtractWordSearch(
+            BinaryData.FromStream(
+                file.OpenReadStream()));
     }
 }
