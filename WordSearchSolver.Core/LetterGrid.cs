@@ -26,11 +26,11 @@ public class LetterGrid
 
     public LetterGrid(string[] letters)
     {
-        var cleanLetters = letters.Select(row => row.Replace(" ", ""));
-        var columns = cleanLetters.FirstOrDefault()?.Length ?? 0;
+        letters = letters.Select(row => row.Replace(" ", "")).ToArray();
+        var columns = letters.FirstOrDefault<string>()?.Length ?? 0;
         if (columns == 0)
             throw new ArgumentException("Grid must not be empty");
-        if (letters.Any(row => row.Length != columns))
+        if (Enumerable.Any(letters, row => row.Length != columns))
             throw new ArgumentException("Grid must be not be jagged");
 
         Grid = new char[letters.Length, columns];
